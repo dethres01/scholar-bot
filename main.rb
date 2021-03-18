@@ -7,7 +7,7 @@ require 'discordrb'
 require 'configatron'
 require_relative 'config'
 # hello test
-bot = Discordrb::Commands::CommandBot.new token: configatron.token, prefix: '!'
+bot = Discordrb::Commands::CommandBot.new token: configatron.token, prefix: 'rin'
 bot.include! Commands
 bot.include! NotesCommands
 bot.run
