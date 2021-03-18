@@ -71,6 +71,7 @@ PLATFORMS
 DEPENDENCIES
   configatron
   discordrb
+  rest-client
   rubocop
 
 BUNDLED WITH
