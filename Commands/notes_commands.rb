@@ -119,8 +119,7 @@ module NotesCommands
     when '1'
       event.bot.send_message(event.channel.id, messages[0])
       titulo = event.user.await!
-      parameters = { 'note' => { 'title' => titulo.message.content.to_s, 'body' => (payload['body']).to_s,
-                                 'discord_id' => event.user.id.to_s, 'server_id' => event.server.id.to_s } }
+      package = parameters(titulo.message.content,payload['body'],event.user.id,event.server.id)
     when '2'
       event.bot.send_message(event.channel.id, messages[1])
       body = event.user.await!
@@ -182,5 +181,10 @@ module NotesCommands
     else
       event.bot.send_message(event.channel.id, 'Saliendo del comando')
     end
+  end
+  private
+  def self.parameters(title,body,discord_id,server_id)
+    {'note' => { 'title' => (title).to_s, 'body' => body.to_s,
+      'discord_id' => discord_id.to_s, 'server_id' => server_id.to_s } }
   end
 end
