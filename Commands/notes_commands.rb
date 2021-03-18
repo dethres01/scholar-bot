@@ -10,6 +10,9 @@ require 'json'
 module NotesCommands
   extend Discordrb::Commands::CommandContainer
   # health
+rescue_from Exception do  |e|
+  e.message
+end
   command(:health) do |event|
     response = RestClient.get("#{ENV['configatron.api_url']}/health")
 
@@ -28,7 +31,7 @@ module NotesCommands
       embed.title = "Notes for #{event.server.name}"
       embed.colour = 0x18c795
       embed.description = 'Probablemente podría esperar por algun input para ver si quieren ver una nota en específico'
-      embed.timestamp = Time.now.asctime
+      embed.timestamp = Time.now
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: event.server.name.to_s, url: 'https://discordapp.com',
                                                           icon_url: event.server.icon_url.to_s)
       payload.each do |note|
@@ -61,7 +64,7 @@ module NotesCommands
       embed.colour = 0x6abf15
       embed.description = (payload_of_post['body']).to_s
       embed.add_field(name: 'note id: ', value: (payload_of_post['id']).to_s)
-      embed.timestamp = Time.now.asctime
+      embed.timestamp = Time.now
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: event.user.name.to_s, url: 'https://discordapp.com',
                                                           icon_url: event.user.avatar_url.to_s)
       embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
@@ -77,7 +80,7 @@ module NotesCommands
       embed.colour = 0x6abf15
       embed.description = (payload['body']).to_s
       embed.add_field(name: 'note id: ', value: (payload['id']).to_s)
-      embed.timestamp = Time.now.asctime
+      embed.timestamp = Time.now
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(
         name: event.server.member((payload['discord_id']).to_s).name.to_s, url: 'https://discordapp.com', icon_url: event.user.avatar_url.to_s
       )
@@ -93,7 +96,7 @@ module NotesCommands
       embed.colour = 0x6abf15
       embed.description = (payload['body']).to_s
       embed.add_field(name: 'note id: ', value: (payload['id']).to_s)
-      embed.timestamp = Time.now.asctime
+      embed.timestamp = Time.now
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(
         name: event.server.member((payload['discord_id']).to_s).name.to_s, url: 'https://discordapp.com', icon_url: event.user.avatar_url.to_s
       )
@@ -147,7 +150,7 @@ module NotesCommands
       embed.colour = 0x6abf15
       embed.description = (payload_of_post['body']).to_s
       embed.add_field(name: 'note id: ', value: (payload_of_post['id']).to_s)
-      embed.timestamp = Time.now.asctime
+      embed.timestamp = Time.now
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: event.user.name.to_s, url: 'https://discordapp.com',
                                                           icon_url: event.user.avatar_url.to_s)
       embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
@@ -162,7 +165,7 @@ module NotesCommands
       embed.colour = 0x6abf15
       embed.description = (payload['body']).to_s
       embed.add_field(name: 'note id: ', value: (payload['id']).to_s)
-      embed.timestamp = Time.now.asctime
+      embed.timestamp = Time.now
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(
         name: event.server.member((payload['discord_id']).to_s).name.to_s, url: 'https://discordapp.com', icon_url: event.user.avatar_url.to_s
       )
