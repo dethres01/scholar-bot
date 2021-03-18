@@ -19,12 +19,13 @@ module NotesCommands
     event.channel.send_embed() do |embed|
       embed.title = "Notes commands"
       embed.colour = 0x18c795
-      embed.description = "List of commands for note management"
+      embed.description = "List of commands for note management prefix is ```rin ```"
       embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: "#{event.server.member("#{configatron.client_id}").avatar_url}")
       embed.add_field(name: '```get_notes```', value: "devuelve la lista de notas del servidor")
       embed.add_field(name: '```create_note```', value: "Empieza el proceso para crear una nota y devuelve la nota creada")
       embed.add_field(name: '```show_note [id]```', value: "dado un ID, devuelve la nota si tiene la suficiente validación")
       embed.add_field(name: '```update_note [id]```', value: "dado un ID, devuelve la nota si tiene la suficiente validación y después comienza el proceso de edición")
+      embed.add_field(name: '```delete_note [id]```', value: "dado un ID, devuelve la nota si tiene la suficiente validación y después comienza el proceso de eliminación si se da permiso")
     end
   end
   #get_notes
@@ -38,7 +39,7 @@ module NotesCommands
       embed.timestamp = Time.at(1616079342)
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: "#{event.server.name}", url: "https://discordapp.com", icon_url: "#{event.server.icon_url}")
       payload.each do |note|
-        embed.add_field(name: "#{note['title']}[#{note['id']}]", value: "#{note['body'][0,50]}...")
+        embed.add_field(name: "#{note['title']} [#{note['id']}]", value: "#{note['body'][0,50]}...")
       end
       #maybe implement a way to NOT show all of them properly
     end
@@ -59,7 +60,7 @@ module NotesCommands
     parameters ={"note"=> {"title"=> "#{titulo.message.content}", "body"=> "#{body.message.content}","discord_id"=> "#{event.user.id}","server_id"=> "#{event.server.id}"}}
     response = RestClient.post "#{configatron.api_url}/notes", parameters
     payload = JSON.parse(response.to_str)
-    return_of_post = RestClient.get "#{configatron.api_url}/notes/#{payload['id']}"
+    return_of_post = RestClient.get "#{configatron.api_url}/notes/#{payload['id']}?auth=#{event.server.id}"
     payload_of_post = JSON.parse(return_of_post.to_str)
     event.channel.send_embed() do |embed|
       embed.title = "#{payload_of_post['title']}"

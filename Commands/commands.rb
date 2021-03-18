@@ -8,6 +8,9 @@ require_relative '../config'
 # Module for usual commands
 module Commands
   extend Discordrb::Commands::CommandContainer
+  command(:invite_url) do |event|
+    event.bot.invite_url
+  end
   command(:exit, help_available: false) do |event|
     break unless event.user.id == configatron.admin_id
 
