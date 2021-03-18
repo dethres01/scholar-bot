@@ -3,7 +3,7 @@
 # command container for the bot
 require 'discordrb'
 require 'configatron'
-require_relative '../config'
+#require_relative '../config'
 
 # Module for usual commands
 module Commands
