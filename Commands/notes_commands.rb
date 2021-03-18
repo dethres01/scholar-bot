@@ -19,6 +19,7 @@ module NotesCommands
   end
   command(:get_notes) do |event|
     response = RestClient.get("#{configatron.api_url}/notes?find=#{event.server.id}")
+    payload = JSON.parse(response.to_str)
   end
   command(:create_note) do |event|
     messages =['```json
@@ -32,11 +33,11 @@ module NotesCommands
     event.bot.send_message(event.channel.id,messages[1])
     body = event.user.await!
 
-    params = {title: titulo.message.content, body: body.message.content}
-    #response = RestClient::Request.new(
-    #    :method => :post,
-    #    :url => "#{configatron.api_url}/notes",
-     #   :payload => { name: 'CodigoFacilito'}
-    #  ).execute#
+    parameters ={"note"=> {"title"=> "#{titulo.message.content}", "body"=> "#{body.message.content}","discord_id"=> "#{event.user.id}","server_id"=> "#{event.server.id}"}}
+    event.bot.send_message(event.channel.id,"#{parameters}")
+    response = RestClient.post "#{configatron.api_url}/notes", parameters
+
+
+
   end
 end
