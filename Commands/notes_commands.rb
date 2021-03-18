@@ -10,9 +10,7 @@ require 'json'
 module NotesCommands
   extend Discordrb::Commands::CommandContainer
   # health
-rescue_from Exception do  |e|
-  e.message
-end
+
   command(:health) do |event|
     response = RestClient.get("#{ENV['configatron.api_url']}/health")
 
