@@ -9,7 +9,7 @@ module NotesCommands
   extend Discordrb::Commands::CommandContainer
   #health
   command(:health) do |event|
-    response = RestClient.get("#{configatron.api_url}/health")
+    response = RestClient.get("#{ENV['configatron.api_url']}/health")
 
     payload = JSON.parse(response.to_str)
     event.bot.send_message(event.channel.id,"La api devolvio #{payload['api']}")
@@ -20,7 +20,7 @@ module NotesCommands
       embed.title = "Notes commands"
       embed.colour = 0x18c795
       embed.description = "List of commands for note management prefix is ```rin ```"
-      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: "#{event.server.member("#{configatron.client_id}").avatar_url}")
+      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: "#{event.server.member("#{ENV['configatron.client_id']}").avatar_url}")
       embed.add_field(name: '```get_notes```', value: "devuelve la lista de notas del servidor")
       embed.add_field(name: '```create_note```', value: "Empieza el proceso para crear una nota y devuelve la nota creada")
       embed.add_field(name: '```show_note [id]```', value: "dado un ID, devuelve la nota si tiene la suficiente validación")
@@ -30,7 +30,7 @@ module NotesCommands
   end
   #get_notes
   command(:get_notes) do |event|
-    response = RestClient.get("#{configatron.api_url}/notes?find=#{event.server.id}")
+    response = RestClient.get("#{ENV['configatron.api_url']}/notes?find=#{event.server.id}")
     payload = JSON.parse(response.to_str)
     event.channel.send_embed() do |embed|
       embed.title = "Notes for #{event.server.name}"
@@ -58,9 +58,9 @@ module NotesCommands
     body = event.user.await!
 
     parameters ={"note"=> {"title"=> "#{titulo.message.content}", "body"=> "#{body.message.content}","discord_id"=> "#{event.user.id}","server_id"=> "#{event.server.id}"}}
-    response = RestClient.post "#{configatron.api_url}/notes", parameters
+    response = RestClient.post "#{ENV['configatron.api_url']}/notes", parameters
     payload = JSON.parse(response.to_str)
-    return_of_post = RestClient.get "#{configatron.api_url}/notes/#{payload['id']}?auth=#{event.server.id}"
+    return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
     payload_of_post = JSON.parse(return_of_post.to_str)
     event.channel.send_embed() do |embed|
       embed.title = "#{payload_of_post['title']}"
@@ -74,7 +74,7 @@ module NotesCommands
   end
   command(:show_note) do |event,id|
     #event.bot.send_message(event.channel.id,id)
-    response = RestClient.get "#{configatron.api_url}/notes/#{id}?auth=#{event.server.id}"
+    response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
     payload = JSON.parse(response.to_str)
 
     event.channel.send_embed() do |embed|
@@ -88,7 +88,7 @@ module NotesCommands
     end
   end
   command(:update_note) do |event,id|
-    response = RestClient.get "#{configatron.api_url}/notes/#{id}?auth=#{event.server.id}"
+    response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
     payload = JSON.parse(response.to_str)
 
     event.channel.send_embed() do |embed|
@@ -136,9 +136,9 @@ module NotesCommands
         event.bot.send_message(event.channel.id,"Invalido, matandome")
         break
       end
-      response = RestClient.put "#{configatron.api_url}/notes/#{id}", parameters
+      response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", parameters
       payload_1 = JSON.parse(response.to_str)
-      return_of_post = RestClient.get "#{configatron.api_url}/notes/#{payload_1['id']}?auth=#{event.server.id}"
+      return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload_1['id']}?auth=#{event.server.id}"
       payload_of_post = JSON.parse(return_of_post.to_str)
       event.channel.send_embed() do |embed|
         embed.title = "#{payload_of_post['title']}"
@@ -151,7 +151,7 @@ module NotesCommands
       end
   end
   command(:delete_note) do |event,id|
-    response = RestClient.get "#{configatron.api_url}/notes/#{id}?auth=#{event.server.id}"
+    response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
     payload = JSON.parse(response.to_str)
 
     event.channel.send_embed() do |embed|
@@ -170,7 +170,7 @@ module NotesCommands
     event.bot.send_message(event.channel.id,message)
     res = event.user.await!
     if res.message.content.upcase == "Y"
-      response = RestClient.delete "#{configatron.api_url}/notes/#{id}?auth=#{event.user.id}"
+      response = RestClient.delete "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.user.id}"
       payload = JSON.parse(response.to_str)
       event.bot.send_message(event.channel.id, "Eliminado con exito!")
     else

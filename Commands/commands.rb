@@ -12,7 +12,7 @@ module Commands
     event.bot.invite_url
   end
   command(:exit, help_available: false) do |event|
-    break unless event.user.id == configatron.admin_id
+    break unless event.user.id == ENV['configatron.admin_id']
 
     event.bot.send_message(event.channel.id, 'Bot is shutting down')
     exit
