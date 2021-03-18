@@ -14,21 +14,20 @@ module Commands
     event.bot.send_message(event.channel.id, 'Bot is shutting down')
     exit
   end
-  command(:roll) do |event,dice|
-
-    if dice.match(/\d+[d]\d+/)
-      #event.bot.send_message(event.channel.id,'Argumentos validos!')
-      decode = dice.match(/(?<number_of_dice>\d+)[d](?<dice_number>\d+)/)
+  command(:roll) do |event, dice|
+    if dice.match(/\d+d\d+/)
+      # event.bot.send_message(event.channel.id,'Argumentos validos!')
+      decode = dice.match(/(?<number_of_dice>\d+)d(?<dice_number>\d+)/)
       number_of_dice = decode[:number_of_dice].to_i
       dice_number = decode[:dice_number].to_i
-      message = ""
-      for x in 1..number_of_dice
-        n=rand(1..dice_number)
+      message = ''
+      (1..number_of_dice).each do |_x|
+        n = rand(1..dice_number)
         message += "#{n} "
       end
-      event.bot.send_message(event.channel.id,":game_die: #{message}")
+      event.bot.send_message(event.channel.id, ":game_die: #{message}")
     else
-      event.bot.send_message(event.channel.id,'Argumentos invalidos, recuerde usar un formato NdN')
+      event.bot.send_message(event.channel.id, 'Argumentos invalidos, recuerde usar un formato NdN')
     end
   end
 end

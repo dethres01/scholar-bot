@@ -5,7 +5,7 @@ require_relative 'Commands/commands'
 require 'discordrb'
 require 'configatron'
 require_relative 'config'
-#hello test
+# hello test
 bot = Discordrb::Commands::CommandBot.new token: configatron.token, prefix: '!'
 bot.include! Commands
 bot.run
