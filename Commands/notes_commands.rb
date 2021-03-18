@@ -2,7 +2,7 @@ require 'discordrb'
 require 'configatron'
 require 'rest-client'
 require 'json'
-require_relative '../config'
+#require_relative '../config'
 
 # Module for usual commands
 module NotesCommands
