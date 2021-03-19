@@ -46,7 +46,7 @@ module NotesCommands
     ```', '```json
     "anota el contenido"
     ```']
-    test_delete =event.bot.send_temporary_message(event.channel.id, messages[0],60)
+    test_delete =event.bot.send_message(event.channel.id, messages[0],60)
     event.bot.send_message(event.channel.id,"#{test_delete}")
     titulo = event.user.await!
     title = titulo.message.content
