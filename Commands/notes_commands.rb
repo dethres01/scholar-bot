@@ -47,26 +47,29 @@ module NotesCommands
     "anota el contenido"
     ```']
     title_delete =event.bot.send_message(event.channel.id, messages[0])
-    #event.bot.send_message(event.channel.id,"#{test_delete.id}")
     titulo = event.user.await!
     title = titulo.message.content
-    titulo.message.delete
     event.channel.delete_message(title_delete.id)
+    titulo.message.delete
+    
     body_delete=event.bot.send_message(event.channel.id, messages[1])
     body = event.user.await!
     content = body.message.content
-    body.message.delete
     event.channel.delete_message(body_delete.id)
+    body.message.delete
+    
     package = parameters(title, content, event.user.id, event.server.id)
     
     
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
-    # se ejecuto post
     payload = parse(response)
+
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
     payload = parse(response)
 
+
     normal_embed(event, payload)
+
   end
   command(:show_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
@@ -90,26 +93,45 @@ module NotesCommands
       2.Texto
       3.Titulo y texto
       ```']
-    event.bot.send_message(event.channel.id, messages[2])
-    opc = event.user.await!
-    opc = opc.message.content
+    
+    res_bot_m=event.bot.send_message(event.channel.id, messages[2])
+    opc_m = event.user.await!
+    opc = opc_m.message.content
+    event.channel.delete_message(res_bot_m.id)
+    opc_m.message.delete
+
     case opc
     when '1'
-      event.bot.send_message(event.channel.id, messages[0])
-      titulo = event.user.await!
-      package = parameters(titulo.message.content, payload['body'], event.user.id, event.server.id)
+
+      title_m=event.bot.send_message(event.channel.id, messages[0])
+      titulo_m = event.user.await!
+      titulo = event.message.content
+      event.channel.delete_message(title_m.id)
+      titulo_m.message.delete
+
+      package = parameters(titulo, payload['body'], event.user.id, event.server.id)
     when '2'
-      event.bot.send_message(event.channel.id, messages[1])
-      body = event.user.await!
-      package = parameters(payload['title'], body.message.content, event.user.id, event.server.id)
+      body_m=event.bot.send_message(event.channel.id, messages[1])
+      body_u_m = event.user.await!
+      body = body_u_m.message.content
+      event.channel.delete_message(body_m.id)
+      body_u_m.message.delete
+
+      package = parameters(payload['title'], body, event.user.id, event.server.id)
     when '3'
-      event.bot.send_message(event.channel.id, messages[0])
+      title_m=event.bot.send_message(event.channel.id, messages[0])
+      titulo_m = event.user.await!
+      titulo = event.message.content
+      event.channel.delete_message(title_m.id)
+      titulo_m.message.delete
 
-      titulo = event.user.await!
-      event.bot.send_message(event.channel.id, messages[1])
-      body = event.user.await!
+      body_m=event.bot.send_message(event.channel.id, messages[1])
+      body_u_m = event.user.await!
+      body = body_u_m.message.content
+      event.channel.delete_message(body_m.id)
+      body_u_m.message.delete
 
-      parameters = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
+      parameters = parameters(titulo, body, event.user.id, event.server.id)
     else
       event.bot.send_message(event.channel.id, 'Opcion Invalida, Lo siento!')
       break
