@@ -50,13 +50,13 @@ module NotesCommands
     #event.bot.send_message(event.channel.id,"#{test_delete.id}")
     titulo = event.user.await!
     title = titulo.message.content
-    delete_m(event,titulo)
-    delete_m(event,title_delete)
+    titulo.message.delete
+    event.channel.delete_message(title_delete.id)
     body_delete=event.bot.send_message(event.channel.id, messages[1])
     body = event.user.await!
     content = body.message.content
-    delete_m(event,body)
-    delete_m(event,body_delete)
+    body.message.delete
+    event.channel.delete_message(body_delete.id)
     package = parameters(title, content, event.user.id, event.server.id)
     
     
@@ -154,9 +154,6 @@ module NotesCommands
   end
 
   # functions
-  def self.delete_m(event,message)
-    event.channel.delete_message(message.id)
-  end
   def self.parse(response)
     JSON.parse(response.to_str)
   end
