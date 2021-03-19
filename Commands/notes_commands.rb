@@ -25,7 +25,7 @@ module NotesCommands
   # get_notes
   command(:get_notes) do |event|
     response = RestClient.get("#{ENV['configatron.api_url']}/notes?find=#{event.server.id}")
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
     event.channel.send_embed do |embed|
       embed.title = "Notes for #{event.server.name}"
       embed.colour = 0x18c795
@@ -55,21 +55,21 @@ module NotesCommands
     package = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
     # se ejecutó post
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
 
     normal_embed(event, payload)
   end
   command(:show_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
 
     normal_embed(event, payload)
   end
   command(:update_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
 
     normal_embed(event, payload)
 
@@ -115,13 +115,13 @@ module NotesCommands
     else
     end
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
 
     normal_embed(event, payload)
   end
   command(:delete_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
-    payload = JSON.parse(response.to_str)
+    payload = parse(response)
 
     normal_embed(event, payload)
     message = '```css
@@ -132,13 +132,15 @@ module NotesCommands
     res = event.user.await!
     if res.message.content.upcase == 'Y'
       response = RestClient.delete "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.user.id}"
-      payload = JSON.parse(response.to_str)
+      payload = parse(response)
       event.bot.send_message(event.channel.id, 'Eliminado con exito!')
     else
       event.bot.send_message(event.channel.id, 'Saliendo del comando')
     end
   end
-
+  def self.parse(response)
+    JSON.parse(response.to_str)
+  end
   def self.normal_embed(event, payload)
     event.channel.send_embed do |embed|
       embed.title = (payload['title']).to_s

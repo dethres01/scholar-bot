@@ -38,6 +38,7 @@ module Commands
   end
 
   command(:exit, help_available: false) do |event|
+
     break unless event.user.id == ENV['configatron.admin_id']
 
     event.bot.send_message(event.channel.id, 'Bot is shutting down')
