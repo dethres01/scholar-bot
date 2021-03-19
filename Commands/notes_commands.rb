@@ -47,11 +47,11 @@ module NotesCommands
     "anota el contenido"
     ```']
     test_delete =event.bot.send_message(event.channel.id, messages[0])
-    event.bot.send_message(event.channel.id,"#{test_delete.id}")
+    #event.bot.send_message(event.channel.id,"#{test_delete.id}")
     titulo = event.user.await!
     title = titulo.message.content
     titulo.message.delete
-    
+    event.channel.delete_message(test_delete.id)
     event.bot.send_temporary_message(event.channel.id, messages[1],60)
     body = event.user.await!
     content = body.message.content
