@@ -138,7 +138,11 @@ module NotesCommands
       event.bot.send_message(event.channel.id, 'Invalido, matandome')
       break
     end
-    response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", parameters
+    begin
+      response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", parameters
+    rescue RestClient::BadRequest
+      event.bot.send_message(event.channel.id,"Hay un problema con el envio de parametros")
+    end
     payload_1 = JSON.parse(response.to_str)
     return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload_1['id']}?auth=#{event.server.id}"
     payload_of_post = JSON.parse(return_of_post.to_str)
@@ -184,7 +188,7 @@ module NotesCommands
   end
   private
   def self.parameters(title,body,discord_id,server_id)
-    return {'note' => { 'title' => (title).to_s, 'body' => body.to_s,
+    return {'note' => { 'title' => title.to_s, 'body' => body.to_s,
       'discord_id' => discord_id.to_s, 'server_id' => server_id.to_s } }
   end
 end
