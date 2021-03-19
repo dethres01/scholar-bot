@@ -140,8 +140,11 @@ module NotesCommands
     end
     begin
       response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", parameters
-    rescue RestClient::BadRequest
-      event.bot.send_message(event.channel.id,"Hay un problema con el envio de parametros")
+    rescue 
+      event.bot.send_message(event.channel.id, "Oh, parece que hubo un problema, contacta al owner")
+      break
+    else
+      
     end
     payload_1 = JSON.parse(response.to_str)
     return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload_1['id']}?auth=#{event.server.id}"
