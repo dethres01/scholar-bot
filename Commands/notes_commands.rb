@@ -139,7 +139,7 @@ module NotesCommands
       break
     end
     begin
-      response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", parameters
+      response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", package
     rescue 
       event.bot.send_message(event.channel.id, "Oh, parece que hubo un problema, contacta al owner")
       break
