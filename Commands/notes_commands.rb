@@ -56,8 +56,8 @@ module NotesCommands
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
     # se ejecutó post
     payload = JSON.parse(response.to_str)
-    return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
-    payload = JSON.parse(return_of_post.to_str)
+    response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
+    payload = JSON.parse(response.to_str)
 
     normal_embed(event, payload)
   end
@@ -115,7 +115,7 @@ module NotesCommands
     else
     end
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
-    payload = JSON.parse(return_of_post.to_str)
+    payload = JSON.parse(response.to_str)
 
     normal_embed(event, payload)
   end
