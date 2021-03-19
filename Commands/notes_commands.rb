@@ -51,7 +51,7 @@ module NotesCommands
     titulo = event.user.await!
     title = titulo.message.content
     titulo.message.delete
-    test_delete.delete
+    event.bot.send_message(event.channel.id,"#{test_delete}")
     event.bot.send_temporary_message(event.channel.id, messages[1],60)
     body = event.user.await!
     content = body.message.content
