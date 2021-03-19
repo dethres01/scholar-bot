@@ -14,10 +14,10 @@ module NotesCommands
   command(:health) do |event|
     begin
       response = RestClient.get("#{ENV['configatron.api_url']}/health")
-    rescue  
-      event.bot.send_message(event.channel.id,"Se ha detectado un problema!")
+    rescue StandardError
+      event.bot.send_message(event.channel.id, 'Se ha detectado un problema!')
     else
-      event.bot.send_message(event.channel.id, "La base de datos esta conectada!")
+      event.bot.send_message(event.channel.id, 'La base de datos esta conectada!')
     end
   end
   # notes_info
@@ -52,54 +52,27 @@ module NotesCommands
     event.bot.send_message(event.channel.id, messages[1])
     body = event.user.await!
 
-    package = parameters(titulo.message.content,body.message.content,event.user.id,event.server.id)
+    package = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
-    #se ejecutó post
+    # se ejecutó post
     payload = JSON.parse(response.to_str)
     return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
     payload = JSON.parse(return_of_post.to_str)
-    event.channel.send_embed do |embed|
-      embed.title = (payload['title']).to_s
-      embed.colour = 0x6abf15
-      embed.description = (payload['body']).to_s
-      embed.add_field(name: 'note id: ', value: (payload['id']).to_s)
-      embed.timestamp = Time.now
-      embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: event.user.name.to_s, url: 'https://discordapp.com',
-                                                          icon_url: event.user.avatar_url.to_s)
-      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
-    end
+
+    normal_embed(event, payload)
   end
   command(:show_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
     payload = JSON.parse(response.to_str)
 
-    event.channel.send_embed do |embed|
-      embed.title = (payload['title']).to_s
-      embed.colour = 0x6abf15
-      embed.description = (payload['body']).to_s
-      embed.add_field(name: 'note id: ', value: (payload['id']).to_s)
-      embed.timestamp = Time.now
-      embed.author = Discordrb::Webhooks::EmbedAuthor.new(
-        name: event.server.member((payload['discord_id']).to_s).name.to_s, url: 'https://discordapp.com', icon_url: event.server.member((payload['discord_id']).to_s).avatar_url
-      )
-      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
-    end
+    normal_embed(event, payload)
   end
   command(:update_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
     payload = JSON.parse(response.to_str)
 
-    event.channel.send_embed do |embed|
-      embed.title = (payload['title']).to_s
-      embed.colour = 0x6abf15
-      embed.description = (payload['body']).to_s
-      embed.add_field(name: 'note id: ', value: (payload['id']).to_s)
-      embed.timestamp = Time.now
-      embed.author = Discordrb::Webhooks::EmbedAuthor.new(
-        name: event.server.member((payload['discord_id']).to_s).name.to_s, url: 'https://discordapp.com', icon_url: event.server.member((payload['discord_id']).to_s).avatar_url
-      )
-      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
-    end
+    normal_embed(event, payload)
+
     messages = ['```json
       "dame el titulo"
       ```', '```json
@@ -117,11 +90,11 @@ module NotesCommands
     when '1'
       event.bot.send_message(event.channel.id, messages[0])
       titulo = event.user.await!
-      package = parameters(titulo.message.content,payload['body'],event.user.id,event.server.id)
+      package = parameters(titulo.message.content, payload['body'], event.user.id, event.server.id)
     when '2'
       event.bot.send_message(event.channel.id, messages[1])
       body = event.user.await!
-      package = parameters(payload['title'],body.message.content,event.user.id,event.server.id)
+      package = parameters(payload['title'], body.message.content, event.user.id, event.server.id)
     when '3'
       event.bot.send_message(event.channel.id, messages[0])
 
@@ -129,38 +102,28 @@ module NotesCommands
       event.bot.send_message(event.channel.id, messages[1])
       body = event.user.await!
 
-      parameters = parameters(titulo.message.content,body.message.content,event.user.id,event.server.id)
+      parameters = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
     else
       event.bot.send_message(event.channel.id, 'Opcion Invalida, Lo siento!')
       break
     end
     begin
-      response = RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", package
-    rescue 
-      event.bot.send_message(event.channel.id, "Oh, parece que hubo un problema, contacta al owner")
+      RestClient.put "#{ENV['configatron.api_url']}/notes/#{id}", package
+    rescue StandardError
+      event.bot.send_message(event.channel.id, 'Oh, parece que hubo un problema, contacta al owner')
       break
     else
-      
     end
-    payload_1 = JSON.parse(response.to_str)
-    return_of_post = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload_1['id']}?auth=#{event.server.id}"
-    payload_of_post = JSON.parse(return_of_post.to_str)
-    event.channel.send_embed do |embed|
-      embed.title = (payload_of_post['title']).to_s
-      embed.colour = 0x6abf15
-      embed.description = (payload_of_post['body']).to_s
-      embed.add_field(name: 'note id: ', value: (payload_of_post['id']).to_s)
-      embed.timestamp = Time.now
-      embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: event.user.name.to_s, url: 'https://discordapp.com',
-                                                          icon_url: event.user.avatar_url.to_s)
-      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
-    end
+    response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
+    payload = JSON.parse(return_of_post.to_str)
+
+    normal_embed(event, payload)
   end
   command(:delete_note) do |event, id|
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.server.id}"
     payload = JSON.parse(response.to_str)
 
-    normal_embed(event,payload)
+    normal_embed(event, payload)
     message = '```css
     [Are you sure?]
     [Y/N]
@@ -175,8 +138,8 @@ module NotesCommands
       event.bot.send_message(event.channel.id, 'Saliendo del comando')
     end
   end
-  private
-  def self.normal_embed(event,payload)
+
+  def self.normal_embed(event, payload)
     event.channel.send_embed do |embed|
       embed.title = (payload['title']).to_s
       embed.colour = 0x6abf15
@@ -189,8 +152,9 @@ module NotesCommands
       embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: event.server.icon_url.to_s)
     end
   end
-  def self.parameters(title,body,discord_id,server_id)
-    return {'note' => { 'title' => title.to_s, 'body' => body.to_s,
-      'discord_id' => discord_id.to_s, 'server_id' => server_id.to_s } }
+
+  def self.parameters(title, body, discord_id, server_id)
+    { 'note' => { 'title' => title.to_s, 'body' => body.to_s,
+                  'discord_id' => discord_id.to_s, 'server_id' => server_id.to_s } }
   end
 end
