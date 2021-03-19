@@ -53,6 +53,8 @@ module NotesCommands
     body = event.user.await!
 
     package = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
+    titulo.message.delete
+    body.message.delete
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
     # se ejecuto post
     payload = parse(response)
