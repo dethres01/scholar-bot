@@ -46,10 +46,10 @@ module NotesCommands
     ```', '```json
     "anota el contenido"
     ```']
-    event.bot.send_message(event.channel.id, messages[0])
+    event.bot.send_temporary_message(event.channel.id, messages[0],60)
 
     titulo = event.user.await!
-    event.bot.send_message(event.channel.id, messages[1])
+    event.bot.send_temporary_message(event.channel.id, messages[1],60)
     body = event.user.await!
 
     package = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
