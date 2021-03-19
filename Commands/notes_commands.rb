@@ -46,16 +46,17 @@ module NotesCommands
     ```', '```json
     "anota el contenido"
     ```']
-    test_delete =event.bot.send_message(event.channel.id, messages[0])
+    title_delete =event.bot.send_message(event.channel.id, messages[0])
     #event.bot.send_message(event.channel.id,"#{test_delete.id}")
     titulo = event.user.await!
     title = titulo.message.content
-    titulo.message.delete
-    event.channel.delete_message(test_delete.id)
-    event.bot.send_temporary_message(event.channel.id, messages[1],60)
+    delete_m(event,titulo)
+    delete_m(event,title_delete)
+    body_delete=event.bot.send_message(event.channel.id, messages[1])
     body = event.user.await!
     content = body.message.content
-    body.message.delete
+    delete_m(event,body)
+    delete_m(event,body_delete)
     package = parameters(title, content, event.user.id, event.server.id)
     
     
@@ -153,6 +154,9 @@ module NotesCommands
   end
 
   # functions
+  def self.delete_m(event,message)
+    event.channel.delete_message(message.id)
+  end
   def self.parse(response)
     JSON.parse(response.to_str)
   end
