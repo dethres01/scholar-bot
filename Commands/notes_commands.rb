@@ -184,7 +184,7 @@ module NotesCommands
   end
   private
   def self.parameters(title,body,discord_id,server_id)
-    {'note' => { 'title' => (title).to_s, 'body' => body.to_s,
+    return {'note' => { 'title' => (title).to_s, 'body' => body.to_s,
       'discord_id' => discord_id.to_s, 'server_id' => server_id.to_s } }
   end
 end
