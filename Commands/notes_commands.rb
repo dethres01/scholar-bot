@@ -49,12 +49,15 @@ module NotesCommands
     event.bot.send_temporary_message(event.channel.id, messages[0],60)
 
     titulo = event.user.await!
+    title = titulo.message.content
+    titulo.message.delete
     event.bot.send_temporary_message(event.channel.id, messages[1],60)
     body = event.user.await!
-
-    package = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
-    titulo.message.delete
+    content = body.message.content
     body.message.delete
+    package = parameters(title, content, event.user.id, event.server.id)
+    
+    
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
     # se ejecuto post
     payload = parse(response)
