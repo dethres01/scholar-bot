@@ -54,7 +54,7 @@ module NotesCommands
 
     package = parameters(titulo.message.content, body.message.content, event.user.id, event.server.id)
     response = RestClient.post "#{ENV['configatron.api_url']}/notes", package
-    # se ejecutó post
+    # se ejecuto post
     payload = parse(response)
     response = RestClient.get "#{ENV['configatron.api_url']}/notes/#{payload['id']}?auth=#{event.server.id}"
     payload = parse(response)
@@ -130,17 +130,27 @@ module NotesCommands
     ```'
     event.bot.send_message(event.channel.id, message)
     res = event.user.await!
+
     if res.message.content.upcase == 'Y'
-      response = RestClient.delete "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.user.id}"
-      payload = parse(response)
-      event.bot.send_message(event.channel.id, 'Eliminado con exito!')
+      begin
+        response = RestClient.delete "#{ENV['configatron.api_url']}/notes/#{id}?auth=#{event.user.id}"
+      rescue StandardError
+        event.bot.send_message(event.channel.id,
+                               'Hubo un problema eliminando el post, esto puede ser por varias razones asi que contacta al owner')
+      else
+        payload = parse(response)
+        event.bot.send_message(event.channel.id, 'Eliminado con exito!')
+      end
     else
-      event.bot.send_message(event.channel.id, 'Saliendo del comando')
+      event.bot.send_message(event.channel.id, 'Input invalido o Negación, Saliendo del comando')
     end
   end
+
+  # functions
   def self.parse(response)
     JSON.parse(response.to_str)
   end
+
   def self.normal_embed(event, payload)
     event.channel.send_embed do |embed|
       embed.title = (payload['title']).to_s
